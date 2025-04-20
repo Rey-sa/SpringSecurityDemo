@@ -23,10 +23,16 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http.csrf(customizer  -> customizer.disable());
-        http.authorizeHttpRequests(request -> request.anyRequest().authenticated());
+        http.authorizeHttpRequests(request -> request
+                .requestMatchers("/h2-console/**").permitAll() // ← NEU: H2-Konsole freigeben
+                .anyRequest().authenticated()
+        );
+        http.headers(headers -> headers.frameOptions(frame -> frame.disable()));
        // http.formLogin(Customizer.withDefaults()); //Login Screen Web
         http.httpBasic(Customizer.withDefaults()); //Needed for HTTP Req. ie via Postman
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+
         return http.build();
     }
 
